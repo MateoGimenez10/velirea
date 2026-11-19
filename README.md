@@ -1,28 +1,24 @@
 # VELIREA
 
-Página de inicio de un emprendimiento de ropa femenina, con diseño responsive, navegación móvil y botón de contacto visible.
+El sitio público y el panel de la dueña se publican juntos desde la rama main en el proyecto velirea de Netlify. El catálogo comienza con las siete categorías de la tienda. Las prendas se cargan desde el panel.
 
-## Archivos
+## Configurar el acceso
 
-- `index.html`: página principal.
-- `page.css`: estilos propios de VELIREA.
-- `catalog/`: catálogo por categorías, componentes y fuente de datos de demostración. El contrato para una futura API se explica en [catalog/README.md](catalog/README.md).
-- `assets/`: fotografías y sistema de interfaz.
-- `fonts/`: tipografías locales y sus licencias OFL.
-- `credits.html`: fuentes de las fotografías de referencia.
+1. En Netlify, abrí el proyecto velirea y entrá en Project configuration → Environment variables.
+2. Agregá VELIREA_OWNER_PASSWORD como variable secreta del contexto Production. Elegí una contraseña única de al menos 20 caracteres con un gestor de contraseñas. El alcance debe incluir Functions.
+3. En Deploys, ejecutá Trigger deploy → Deploy project. Esperá el estado Published.
+4. Abrí https://velirea.netlify.app/admin/ e ingresá la contraseña. Desde allí podés cargar prendas, fotos y categorías.
 
-Es un sitio estático: no requiere instalar dependencias ni ejecutar una compilación. Para publicarlo en un hosting compatible, la carpeta de publicación es la raíz del repositorio.
+Para cambiar o recuperar el acceso, reemplazá el valor de la variable y volvé a desplegar. La sesión dura ocho horas. Cerrar sesión la invalida en el servidor. La dueña debe conservar el acceso a su cuenta de Netlify.
 
-## Datos pendientes
+## Publicación y almacenamiento
 
-Las fotografías de Pexels sirven como referencia visual y deben reemplazarse por imágenes del catálogo real de VELIREA. Los créditos y enlaces de origen están en `credits.html`.
+Netlify lee netlify.toml, instala las dependencias, ejecuta npm run build, publica dist y despliega netlify/functions/shop.mjs. La función lee la contraseña en ejecución. El directorio público contiene el sitio y el formulario de ingreso.
 
-El canal de contacto real se agregará más adelante. Actualmente los botones de portada y cabecera llevan al bloque de consultas, y el botón final usa el correo reservado de muestra `hola@velirea.example`. Hay que reemplazarlo antes del lanzamiento comercial.
+Los datos se guardan en el almacén persistente del sitio velirea-shop-v1. Netlify proporciona las credenciales de acceso al almacén a la función. Volver a publicar el mismo proyecto conserva los datos. Eliminar el proyecto o el almacén elimina su acceso. El consumo está sujeto al plan de Netlify. Consultá el [almacenamiento de Netlify](https://docs.netlify.com/build/data-and-storage/netlify-blobs/) y la [configuración de variables](https://docs.netlify.com/build/functions/environment-variables/).
 
-El dominio propio y la URL absoluta de la imagen para compartir también se configurarán al elegir hosting. El sitio funciona sin conexión con ChatGPT Sites.
+El correo de contacto de la portada sigue pendiente de configuración. Las fotografías editoriales y sus créditos están en credits.html.
 
-## Revisión
+## Desarrollo
 
-El diseño fue revisado en anchos de 1440, 1024, 820, 768, 390 y 320 píxeles. Las fotografías tienen texto alternativo, el menú admite teclado y las animaciones respetan la preferencia de movimiento reducido.
-
-Las tipografías Bricolage Grotesque y Figtree incluyen sus licencias en `fonts/`. El sistema de interfaz proviene de la skill design-taste-frontend y se conserva sin modificaciones.
+Con Node 22 o superior, ejecutá npm ci, npm test y npm run build. Las pruebas de integración usan el servidor local de archivos de Netlify Blobs. Para desarrollar en el navegador con funciones y almacenamiento locales, usá Netlify Dev desde la raíz. Configurá una contraseña de desarrollo en el entorno local. El contrato del catálogo está en [catalog/README.md](catalog/README.md).

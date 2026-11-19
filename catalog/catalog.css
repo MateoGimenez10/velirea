@@ -33,6 +33,8 @@
 .catalog-card__image-error { display: grid; place-items: center; height: 100%; padding: var(--s-5); margin: 0; text-align: center; color: var(--ink); }
 .catalog-card__content { padding: var(--s-4); display: flex; flex-direction: column; flex: 1; gap: var(--s-2); }
 .catalog-card__content p { margin: 0; }
+.catalog-description { white-space: pre-line; overflow-wrap: anywhere; }
+.catalog-next { align-self: start; min-height: 44px; color: var(--action); background: transparent; border: 0; text-decoration: underline; cursor: pointer; }
 .catalog-card__state { font-size: var(--t-small); line-height: 1.5; font-weight: 500; color: var(--ink); }
 .catalog-card__state[data-status="sold_out"] { color: var(--muted); }
 .catalog-card__name { font: 500 var(--t-body)/1.5 var(--font-text); margin: 0; overflow-wrap: anywhere; }

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#efdfc5">
+<title>Administrar catálogo · VELIREA</title>
+<link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/admin/panel.css">
+<script type="module" src="/admin/panel.js"></script></head>
+<body><header><a href="/">VELIREA</a><button id="logout" hidden>Cerrar sesión</button></header>
+<main><h1>Administrar catálogo</h1>
+<p id="message" role="status" aria-live="polite">Cargando…</p>
+<form id="login" hidden><h2>Acceso de la dueña</h2>
+<label>Contraseña<input name="password" type="password" autocomplete="current-password" required></label>
+<button class="primary">Ingresar</button></form>
+<div id="workspace" hidden>
+<section><div class="section-heading"><h2>Prendas</h2><button id="add" class="primary">Agregar prenda</button></div>
+<ul id="products"></ul></section>
+<form id="editor" hidden><h2 id="form-title">Nueva prenda</h2>
+<label>Nombre<input name="name" maxlength="150" required></label>
+<label>Descripción<textarea name="description" maxlength="4000" rows="3"></textarea></label>
+<div class="columns"><label>Precio en pesos argentinos<input name="price" type="text" inputmode="decimal" placeholder="24500,50" required></label>
+<label>Categoría<select name="category" required></select></label></div>
+<label>Talles (separados por coma)<input name="sizes" placeholder="S, M, L" required></label>
+<label>Estado<select name="status"><option value="available">Disponible</option><option value="sold_out">Agotado</option></select></label>
+<label class="check"><input name="visible" type="checkbox" checked>Mostrar en el catálogo</label>
+<fieldset><legend>Fotos</legend><p>La primera es la portada. Podés agregar hasta ocho.</p>
+<div id="photos"></div><label>Agregar fotos<input id="files" type="file" accept="image/*" multiple></label></fieldset>
+<div class="buttons"><button class="primary">Guardar prenda</button><button id="cancel" type="button">Cancelar</button></div></form>
+<section><h2>Categorías</h2><ol id="categories"></ol>
+<form id="category"><label id="category-label" for="category-name">Nueva categoría</label><input id="category-name" name="name" maxlength="100" required>
+<div class="buttons"><button class="primary">Guardar categoría</button><button type="button" id="cancel-category" hidden>Cancelar</button></div></form></section>
+</div></main></body></html>

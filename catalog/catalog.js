@@ -14,7 +14,6 @@ const emptyTitle = document.querySelector('[data-catalog-empty-title]');
 const status = document.querySelector('[data-catalog-status]');
 const retry = document.querySelector('[data-catalog-retry]');
 const announcement = document.querySelector('[data-catalog-announcement]');
-const demoNotice = document.getElementById('catalog-demo-notice');
 let catalog, categories = [], focusHeading = false, request = 0;
 
 function categoryLink(category, location) {
@@ -42,7 +41,6 @@ function render({ navigate = false } = {}) {
   grid.hidden = products.length === 0;
   empty.hidden = products.length !== 0;
   emptyTitle.textContent = category ? `Todavía no hay prendas en ${category.name}.` : (categories.length ? 'No encontramos esa categoría.' : 'Todavía no hay categorías para mostrar.');
-  demoNotice.hidden = !catalog.isDemo && !products.some((product) => product.isDemo);
   announcement.textContent = `${heading.textContent}: ${products.length} ${products.length === 1 ? 'prenda' : 'prendas'}.`;
   root.dataset.catalogReady = 'true';
   if (navigate) {

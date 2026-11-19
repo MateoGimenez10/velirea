@@ -1,0 +1,14 @@
+@font-face{font-family:Figtree;src:url('/fonts/figtree-400.ttf')}@font-face{font-family:Bricolage;src:url('/fonts/bricolage-400.ttf')}
+*{box-sizing:border-box}body{margin:0;background:#efdfc5;color:#382719;font:16px/1.5 Figtree,system-ui,sans-serif}
+header,main{max-width:54rem;margin:auto;padding:1.25rem}header,.section-heading,.buttons,.row{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap}
+header,.section-heading{justify-content:space-between}header{border-bottom:1px solid #b69c80}header a{letter-spacing:.16em;text-decoration:none;color:inherit}
+h1,h2{font:400 2.2rem/1.15 Bricolage,serif;margin:.5rem 0 1rem}h2{font-size:1.6rem}section,#login,#editor{background:#f7efe1;padding:clamp(1rem,3vw,2rem);border-radius:.8rem;margin-bottom:1rem}
+form,label{display:grid;gap:.5rem}form{gap:1rem}input,textarea,select,button{min-width:0;max-width:100%;font:inherit}
+input:not([type=checkbox]),textarea,select{width:100%;padding:.65rem;border:1px solid #987b62;background:#fffaf2;color:inherit;border-radius:.35rem}
+button{padding:.5rem .85rem;min-height:44px;cursor:pointer;background:transparent;border:1px solid #987b62;color:inherit;border-radius:.35rem}
+.primary{background:#684730;color:#fff9ef;border-color:#684730}button:disabled{opacity:.55;cursor:default}
+:focus-visible{outline:3px solid #684730;outline-offset:2px}.check{display:flex;align-items:center;gap:.65rem}.check input{width:1.25rem;height:1.25rem}
+.columns{display:grid;grid-template-columns:1fr 1fr;gap:1rem}ul,ol{padding:0;list-style:none}.row{border-top:1px solid #ccb89c;padding:.55rem 0}.row span{flex:1;min-width:8rem;overflow-wrap:anywhere}
+fieldset{min-width:0;border:1px solid #ccb89c;border-radius:.45rem}#photos{display:flex;flex-wrap:wrap;gap:.7rem}figure{margin:0;display:grid;gap:.25rem}figure img{width:5rem;height:5rem;object-fit:cover;border-radius:.35rem}
+#message{position:sticky;top:.4rem;z-index:1;background:#382719;color:#fff9ef;padding:.6rem 1rem;border-radius:.35rem}#message:empty,[hidden]{display:none!important}
+@media(max-width:560px){.columns{grid-template-columns:1fr}.row span{flex-basis:100%}main,header{padding:1rem}}

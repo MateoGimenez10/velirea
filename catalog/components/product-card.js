@@ -36,9 +36,20 @@ export function productCard(product) {
   const price = element('p', 'catalog-card__price', formatPrice(product.priceCents));
   const sizes = element('p', 'catalog-card__sizes', `Talles: ${product.sizes.join(' · ')}`);
   content.append(state, title, price, sizes);
-  if (product.isDemo) {
-    card.dataset.demonstration = 'true';
-    content.append(element('p', 'catalog-card__demo', 'Demostración'));
+  if (product.description) content.append(element('p', 'catalog-description', product.description));
+  if (product.images.length > 1) {
+    const next = element('button', 'catalog-next', 'Ver foto 2 de ' + product.images.length);
+    let current = 0;
+    next.type = 'button';
+    next.addEventListener('click', () => {
+      current = (current + 1) % product.images.length;
+      const photo = product.images[current];
+      image.src = photo.src;
+      image.alt = photo.alt;
+      media.replaceChildren(image);
+      next.textContent = 'Ver foto ' + ((current + 1) % product.images.length + 1) + ' de ' + product.images.length;
+    });
+    content.append(next);
   }
   card.append(media, content);
   return card;
