@@ -46,7 +46,8 @@ function publicCatalog(catalog) {
   return {...catalog, categories, products: catalog.products.filter(p => p.isVisible && ids.has(p.categoryId))};
 }
 async function login(request, store, password, ip) {
-  requireThat(password?.length >= 20, 503, 'Falta configurar el acceso de la dueña en Netlify.');
+  requireThat(password?.trim(), 503, 'La función no recibió la contraseña de Production. Revisá el alcance Functions en Netlify y volvé a desplegar.');
+  requireThat(password.length >= 20, 503, 'La contraseña configurada no cumple el mínimo de 20 caracteres. Actualizala en Netlify y volvé a desplegar.');
   const input = await readJSON(request);
   const key = 'attempt/' + digest(ip || 'unknown').toString('hex');
   const attempt = await store.getWithMetadata(key, {type:'json'});
@@ -65,7 +66,7 @@ async function login(request, store, password, ip) {
 }
 async function authorized(request, store, password) {
   const token = tokenFrom(request);
-  if (!token || !password || password.length < 20) return false;
+  if (!token || !password?.trim() || password.length < 20) return false;
   const session = await store.get('session/' + digest(token).toString('hex'), {type:'json'});
   return session?.until > Date.now() && session.credential === digest(password + token).toString('hex');
 }
