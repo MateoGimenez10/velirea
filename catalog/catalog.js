@@ -1,100 +1,119 @@
 import { loadCatalog } from './repository.js';
-import { categoryHref, productsForCategory, slugFromHash, visibleCategories } from './model.js';
+import { categoryHref, productsForCategory, visibleCategories } from './model.js';
 import { productCard } from './components/product-card.js';
 
-const root = document.getElementById('coleccion');
-const filters = document.querySelector('[data-catalog-filters]');
-const menu = document.querySelector('[data-catalog-menu]');
-const disclosure = document.querySelector('.catalog-menu');
-const heading = document.getElementById('catalog-category-heading');
-const count = document.querySelector('[data-catalog-count]');
-const grid = document.querySelector('[data-catalog-grid]');
-const empty = document.querySelector('[data-catalog-empty]');
-const emptyTitle = document.querySelector('[data-catalog-empty-title]');
+const allName = 'Todas las colecciones';
+const editorial = new Map([
+  ['pantalones', '/assets/img/catalog/pantalon-beige.jpg'],
+  ['remeras', '/assets/img/catalog/remera-blanca.jpg'],
+  ['shorts', '/assets/img/catalog/short-denim.jpg'],
+  ['blusas', '/assets/img/catalog/blusa-blanca.jpg']
+]);
+const tiles = document.querySelector('[data-catalog-tiles]');
 const status = document.querySelector('[data-catalog-status]');
 const retry = document.querySelector('[data-catalog-retry]');
-const announcement = document.querySelector('[data-catalog-announcement]');
-let catalog, categories = [], focusHeading = false, request = 0;
+const disclosure = document.querySelector('.catalog-menu');
 
-function categoryLink(category, location) {
+function linkTo(category) {
   const link = document.createElement('a');
-  link.className = 'catalog-category';
   link.href = categoryHref(category);
-  link.textContent = category.name;
-  link.dataset.catalogSlug = category.slug;
-  link.dataset.catalogLocation = location;
+  link.textContent = category?.name ?? allName;
   return link;
 }
-
-function render({ navigate = false } = {}) {
-  if (!catalog) return;
-  const slug = slugFromHash(window.location.hash);
-  const category = slug === null ? categories[0] : categories.find((item) => item.slug === slug);
-  const products = category ? productsForCategory(catalog, category.id) : [];
-  heading.textContent = category?.name || (categories.length ? 'Categoría no encontrada' : 'Catálogo');
-  count.textContent = category ? `${products.length} ${products.length === 1 ? 'prenda' : 'prendas'}` : '';
-  document.querySelectorAll('[data-catalog-slug]').forEach((link) => {
-    if (category?.slug === link.dataset.catalogSlug) link.setAttribute('aria-current', 'true');
-    else link.removeAttribute('aria-current');
-  });
-  grid.replaceChildren(...products.map(productCard));
-  grid.hidden = products.length === 0;
-  empty.hidden = products.length !== 0;
-  emptyTitle.textContent = category ? `Todavía no hay prendas en ${category.name}.` : (categories.length ? 'No encontramos esa categoría.' : 'Todavía no hay categorías para mostrar.');
-  announcement.textContent = `${heading.textContent}: ${products.length} ${products.length === 1 ? 'prenda' : 'prendas'}.`;
-  root.dataset.catalogReady = 'true';
-  if (navigate) {
-    root.scrollIntoView({ behavior: 'instant', block: 'start' });
-    if (focusHeading) heading.focus({ preventScroll: true });
+function categoryTile(category, products) {
+  const link = linkTo(category);
+  link.className = 'collection-tile';
+  const label = document.createElement('span');
+  label.className = 'tile-label';
+  label.textContent = link.textContent;
+  const arrow = document.createElement('span');
+  arrow.className = 'tile-arrow';
+  arrow.setAttribute('aria-hidden','true');
+  arrow.textContent = '↗';
+  const frame = document.createElement('span');
+  frame.className = 'tile-frame';
+  frame.setAttribute('aria-hidden','true');
+  const monogram = document.createElement('span');
+  monogram.className = 'tile-letter';
+  monogram.textContent = category?.name.trim().charAt(0).toLocaleUpperCase('es') || 'V';
+  frame.append(monogram);
+  const src = category
+    ? products[0]?.images[0]?.src ?? editorial.get(category.slug)
+    : '/assets/img/editorial-small.jpg';
+  if (src) {
+    const img = new Image();
+    img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
+    img.addEventListener('error', () => img.remove(), {once:true});
+    img.src = src;
+    frame.append(img);
   }
-  focusHeading = false;
+  label.append(arrow);
+  link.replaceChildren(frame,label);
+  return link;
 }
-
+function showDirectory(categories, byCategory, products) {
+  const entries = [null, ...categories];
+  tiles.replaceChildren(...entries.map(c => categoryTile(c, c ? byCategory.get(c.id) : products)));
+  document.querySelector('[data-catalog-menu]').replaceChildren(...entries.map(c => {
+    const link = linkTo(c);
+    link.className = 'catalog-category';
+    return link;
+  }));
+}
+function showCategory(categories, byCategory, allProducts) {
+  const slug = new URLSearchParams(location.search).get('categoria');
+  const selected = categories.find(category => category.slug === slug);
+  const title = slug === null ? allName : selected?.name ?? 'Categoría no encontrada';
+  const products = slug === null ? allProducts : byCategory.get(selected?.id) ?? [];
+  document.title = title + ' · VELIREA';
+  document.querySelector('[data-heading]').textContent = title;
+  document.querySelector('[data-count]').textContent = products.length ? products.length + (products.length === 1 ? ' prenda' : ' prendas') : '';
+  document.querySelector('[data-products]').replaceChildren(...products.map(productCard));
+  document.querySelector('[data-empty]').hidden = !!products.length;
+  document.querySelector('[data-back]').hidden = !products.length;
+  document.querySelector('[data-empty-message]').textContent = slug !== null && !selected ? 'Esta categoría ya no está disponible.' : 'Todavía no hay prendas en esta colección.';
+  const select = document.querySelector('[data-category-switch]');
+  select.replaceChildren(...[null,...categories].map(c => new Option(c?.name ?? allName, categoryHref(c))));
+  select.value = selected || slug === null ? categoryHref(selected) : '';
+  select.parentElement.hidden = false;
+  select.onchange = () => location.assign(select.value);
+  document.querySelector('.collection-detail').classList.add('is-ready');
+}
+let request = 0;
 async function refresh() {
-  const token = ++request;
-  status.hidden = false;
-  status.textContent = 'Cargando las prendas…';
+  const current = ++request;
   retry.hidden = true;
+  status.hidden = false;
+  status.textContent = tiles ? 'Cargando categorías…' : 'Cargando prendas…';
   try {
-    const result = await loadCatalog();
-    if (token !== request) return;
-    catalog = result;
-    categories = visibleCategories(catalog);
-    filters.replaceChildren(...categories.map((category) => categoryLink(category, 'catalog')));
-    menu.replaceChildren(...categories.map((category) => categoryLink(category, 'menu')));
+    const catalog = await loadCatalog();
+    if (current !== request) return;
+    const categories = visibleCategories(catalog);
+    const byCategory = new Map(categories.map(c => [c.id,productsForCategory(catalog,c.id)]));
+    const products = [...byCategory.values()].flat();
+    if (tiles) showDirectory(categories,byCategory,products);
+    else showCategory(categories,byCategory,products);
     status.hidden = true;
-    render({ navigate: window.location.hash.startsWith('#coleccion/') });
-  } catch (error) {
-    if (token !== request) return;
-    status.textContent = 'No pudimos cargar las prendas. Volvé a intentar.';
+  } catch {
+    if (current !== request) return;
+    status.textContent = 'No pudimos cargar la colección.';
     retry.hidden = false;
-    console.error('No se pudo cargar el catálogo.', error);
   }
 }
-
-document.addEventListener('click', (event) => {
-  const link = event.target.closest('a[data-catalog-slug]');
-  if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-  focusHeading = link.dataset.catalogLocation === 'menu';
-  disclosure.open = false;
-  if (window.location.hash === link.hash) {
-    event.preventDefault();
-    render({ navigate: true });
-  }
-});
-
-window.addEventListener('hashchange', () => {
-  if (window.location.hash === '#coleccion' || window.location.hash.startsWith('#coleccion/')) render({ navigate: true });
-});
-document.addEventListener('pointerdown', (event) => {
-  if (disclosure.open && !disclosure.contains(event.target)) disclosure.open = false;
-});
-document.addEventListener('keydown', (event) => {
-  if (event.key !== 'Escape' || !disclosure.open) return;
-  event.preventDefault();
-  event.stopPropagation();
-  disclosure.open = false;
-  disclosure.querySelector('summary').focus();
-}, true);
-retry.addEventListener('click', refresh);
+if (disclosure) {
+  document.addEventListener('pointerdown', event => {
+    if (!disclosure.contains(event.target)) disclosure.open = false;
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && disclosure.open) {
+      event.preventDefault();
+      event.stopPropagation();
+      disclosure.open = false;
+      disclosure.querySelector('summary').focus();
+    }
+  },true);
+  disclosure.addEventListener('click', event => { if (event.target.closest('a')) disclosure.open = false; });
+}
+retry.addEventListener('click',refresh);
+window.addEventListener('pageshow', e => { if (e.persisted) refresh(); });
 refresh();

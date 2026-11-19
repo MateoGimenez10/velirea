@@ -31,7 +31,7 @@ export function productCard(product) {
   const content = element('div', 'catalog-card__content');
   const state = element('p', 'catalog-card__state', product.status === PRODUCT_STATUS.AVAILABLE ? 'Disponible' : 'Agotado');
   state.dataset.status = product.status;
-  const title = element('h4', 'catalog-card__name', product.name);
+  const title = element('h2', 'catalog-card__name', product.name);
   title.id = `product-${product.id}`;
   const price = element('p', 'catalog-card__price', formatPrice(product.priceCents));
   const sizes = element('p', 'catalog-card__sizes', `Talles: ${product.sizes.join(' · ')}`);

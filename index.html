@@ -6,6 +6,15 @@
 <title>VELIREA: ropa femenina</title>
 <meta name="description" content="Conocé VELIREA, tu próximo look y las prendas que querés combinar a tu manera.">
 <meta name="page-type" content="product"><meta name="site-kind" content="other">
+<script>
+function abrirCategoriaAnterior() {
+  if (location.hash.startsWith('#coleccion/')) {
+    location.replace('/coleccion/?categoria=' + location.hash.slice(11));
+  }
+}
+abrirCategoriaAnterior();
+window.addEventListener('hashchange', abrirCategoriaAnterior);
+</script>
 <meta name="theme-color" content="#efdfc5">
 <meta property="og:type" content="website"><meta property="og:title" content="VELIREA · Ropa femenina">
 <meta property="og:description" content="Ropa femenina para tu día. Conocé VELIREA.">
@@ -84,7 +93,7 @@
    <div class="nav__item"><a class="nav__link" href="#estilo">Estilo</a></div>
    <div class="nav__item"><a class="nav__link" href="#consultas">Consultas</a></div>
   </nav>
-  <div class="nav__actions"><a class="btn btn--primary" href="#consultas">Contactar a VELIREA</a></div>
+  
   <button class="nav__toggle" type="button" aria-controls="menu-principal" aria-expanded="false" aria-label="Abrir menú"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6"/></svg></button>
  </div>
 </header>
@@ -97,25 +106,17 @@
     <div class="hero__over"><div>
      <h1 id="hero-h">Ropa femenina para tu día.</h1>
      <p class="hero__lead">Elegí tu próximo look. Conocé VELIREA y encontrá la ropa que querés llevar, combinar y volver a usar.</p>
-     <div class="btn-row"><a class="btn btn--primary" href="#consultas">Contactar a VELIREA</a><a class="btn btn--secondary" href="#coleccion">Ver la colección</a></div>
+     <div class="btn-row"><a class="btn btn--primary" href="#coleccion">Ver la colección</a></div>
     </div></div>
    </div>
   </div></div>
  </section>
  <section class="section catalog-section" id="coleccion" aria-labelledby="collection-h">
   <div class="wrap">
-   <div class="catalog-heading">
-    <div><h2 id="collection-h">Catálogo de prendas.</h2><p class="t-lead">Elegí una categoría para ver las prendas.</p></div>
-   </div>
-   <nav class="catalog-filters" aria-label="Filtrar prendas por categoría" data-catalog-filters></nav>
-   <p class="catalog-status" role="status" data-catalog-status>Cargando las prendas…</p>
+   <div class="catalog-heading"><h2 id="collection-h">La colección</h2></div>
+   <nav class="collection-tiles" aria-label="Explorar la colección" data-catalog-tiles></nav>
+   <p role="status" data-catalog-status>Cargando categorías…</p>
    <button class="btn btn--secondary" type="button" data-catalog-retry hidden>Volver a intentar</button>
-   <div class="catalog-results" role="region" aria-labelledby="catalog-category-heading">
-    <div class="catalog-results__head"><h3 id="catalog-category-heading" tabindex="-1"></h3><p data-catalog-count></p></div>
-    <div class="catalog-grid" data-catalog-grid hidden></div>
-    <div class="catalog-empty" data-catalog-empty hidden><p class="catalog-empty__title" data-catalog-empty-title></p><p>Elegí otra categoría para seguir viendo el catálogo.</p><a class="link" href="#coleccion">Ver las prendas</a></div>
-   </div>
-   <p class="catalog-announcement" role="status" aria-live="polite" data-catalog-announcement></p>
    <noscript><p>Activá JavaScript para elegir una categoría y ver las prendas.</p></noscript>
   </div>
  </section>
@@ -134,12 +135,12 @@
   </div>
   <div class="closing__links">
    <div class="footer-directory"><a class="footer__mark" href="#top"><span class="mark mark--initial" aria-hidden="true">V</span>VELIREA</a><p>Ropa femenina.</p><nav aria-label="Navegación del pie"><a href="#coleccion">Colección</a><a href="#estilo">Estilo</a></nav></div>
-   <div class="footer__legal"><span>© 2026 VELIREA</span><a href="credits.html">Fotografías de referencia vía Pexels</a></div>
+
    <div class="intro-preference"><a href="?entrada=animada">Activar animación de entrada</a><a href="?entrada=sistema">Usar movimiento del sistema</a></div>
   </div>
  </div>
 </footer>
-<nav class="actionbar" aria-label="Contacto rápido"><a class="btn btn--primary" href="#consultas">Contactar a VELIREA</a></nav>
+
 <script type="module" src="assets/system.js"></script><script type="module" src="assets/layout/layout.js"></script><script type="module" src="assets/motion/motion.js"></script>
 <script type="module" src="catalog/catalog.js"></script>
 </body>

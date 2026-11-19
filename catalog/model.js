@@ -47,7 +47,7 @@ export function productsForCategory(catalog, categoryId) {
 
 const pesos = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0, maximumFractionDigits: 2 });
 export const formatPrice = (priceCents) => `${pesos.format(priceCents / 100)} ARS`;
-export const categoryHref = (category) => `#coleccion/${category.slug}`;
+export const categoryHref = (category) => category ? '/coleccion/?categoria=' + encodeURIComponent(category.slug) : '/coleccion/';
 export function slugFromHash(hash) {
   if (hash === '#coleccion' || !hash.startsWith('#coleccion/')) return null;
   try { return decodeURIComponent(hash.slice('#coleccion/'.length)); } catch { return ''; }
