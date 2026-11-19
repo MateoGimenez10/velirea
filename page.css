@@ -31,7 +31,7 @@
 .brand-intro span {
   font: 400 clamp(2.5rem, 15vw, 10rem)/1 Georgia, serif;
   letter-spacing: .055em;
-  animation: velirea-name var(--m-image) var(--m-ease-enter) both;
+  animation: velirea-name calc(var(--m-image) * 2 + var(--m-slide)) var(--m-ease-io) both;
 }
 .brand-intro[data-variant="foto"] {
   place-items: end start;
@@ -40,15 +40,18 @@
   background: linear-gradient(0deg, rgb(40 26 16 / .8), transparent 85%),
     var(--intro-photo, url("assets/img/editorial.jpg")) var(--intro-position, center 25%) / cover var(--p-accent);
 }
-.brand-intro[data-variant="foto"] span { animation-name: velirea-photo-name; }
+.brand-intro[data-variant="foto"] span { transform-origin: left bottom; }
 @media (prefers-reduced-motion: reduce) {
   .brand-intro[data-variant], .brand-intro[data-variant] span { animation: none; }
 }
 @media (max-width: 639px) {
   .brand-intro { --intro-photo: url("assets/img/editorial-small.jpg"); --intro-position: 90% center; }
 }
-@keyframes velirea-name { from { opacity: 0; transform: translateY(.12em); } to { opacity: 1; transform: none; } }
-@keyframes velirea-photo-name { from { opacity: 0; } to { opacity: 1; } }
+@keyframes velirea-name {
+  0% { opacity: 0; transform: scale(.9); animation-timing-function: var(--m-ease-enter); }
+  48%, 55% { opacity: 1; transform: scale(1.16); }
+  100% { opacity: 0; transform: scale(.58); }
+}
 @keyframes velirea-reveal { from { opacity: 1; } to { opacity: 0; } }
 @media (max-width: 1023px) {
   html .nav.is-open :is(.nav__links, .nav__actions) {
