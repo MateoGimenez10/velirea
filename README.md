@@ -6,6 +6,7 @@ Página de inicio de un emprendimiento de ropa femenina, con diseño responsive,
 
 - `index.html`: página principal.
 - `page.css`: estilos propios de VELIREA.
+- `catalog/`: catálogo por categorías, componentes y fuente de datos de demostración. El contrato para una futura API se explica en [catalog/README.md](catalog/README.md).
 - `assets/`: fotografías y sistema de interfaz.
 - `fonts/`: tipografías locales y sus licencias OFL.
 - `credits.html`: fuentes de las fotografías de referencia.

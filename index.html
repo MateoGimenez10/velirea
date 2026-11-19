@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="assets/system.css"><link rel="stylesheet" href="assets/ui/cards.css">
 <link rel="stylesheet" href="assets/motion/motion.css"><link rel="stylesheet" href="assets/layout/layout.css">
 <link rel="stylesheet" href="page.css">
+<link rel="stylesheet" href="catalog/catalog.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="assets/moments/moments.js"><link rel="modulepreload" href="assets/moments/lib.js"><link rel="modulepreload" href="assets/moments/picture-develops/moment.js">
@@ -29,7 +30,12 @@
   <a class="skip-link" href="#top">Saltar al contenido</a>
   <a class="nav__logo" href="#top" aria-label="VELIREA, inicio"><span class="mark mark--initial" aria-hidden="true">V</span>VELIREA</a>
   <nav class="nav__links" aria-label="Navegación principal">
-   <div class="nav__item"><a class="nav__link" href="#coleccion">Colección</a></div>
+   <div class="nav__item">
+    <details class="catalog-menu">
+     <summary class="nav__link">Colección <svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></summary>
+     <div class="catalog-menu__panel"><nav class="wrap catalog-menu__links" aria-label="Categorías de prendas" data-catalog-menu><a class="catalog-category" href="#coleccion">Ver el catálogo</a></nav></div>
+    </details>
+   </div>
    <div class="nav__item"><a class="nav__link" href="#estilo">Estilo</a></div>
    <div class="nav__item"><a class="nav__link" href="#consultas">Consultas</a></div>
   </nav>
@@ -51,13 +57,22 @@
    </div>
   </div></div>
  </section>
- <section class="section" id="coleccion" style="--h:1; --hm:2" aria-labelledby="collection-h">
+ <section class="section catalog-section" id="coleccion" aria-labelledby="collection-h">
   <div class="wrap">
-   <div class="section-head section-head--row"><div><h2 id="collection-h">Colección de ropa femenina.</h2><p class="t-lead">Un look empieza con una prenda. El resto lo elegís vos.</p></div><a class="link" href="#estilo">Ver los detalles</a></div>
-   <div class="grid collection-grid">
-    <a class="card card--open span-6" href="#consultas" aria-label="Consultar por prendas de vestir"><div class="panel frame frame--photo m-zoom"><img class="frame__img" src="assets/img/contact.jpg" alt="Ropa femenina: blazer y pantalón en tono arena con top negro" width="1200" height="1800" data-source="stand-in" data-subject="ropa femenina" loading="lazy" decoding="async"></div></a>
-    <a class="card card--open span-6" href="#consultas" aria-label="Consultar por conjuntos"><div class="panel frame frame--photo m-zoom"><img class="frame__img" src="assets/img/look-02.jpg" alt="Ropa femenina: conjunto tejido de pantalón amplio y cuello alto en marrón" width="900" height="1125" data-source="stand-in" data-subject="conjunto tejido" loading="lazy" decoding="async"></div></a>
+   <div class="catalog-heading">
+    <div><h2 id="collection-h">Catálogo de prendas.</h2><p class="t-lead">Elegí una categoría para ver las prendas.</p></div>
+    <p class="catalog-notice" id="catalog-demo-notice"><strong>Catálogo de demostración</strong>Las prendas, los precios y los talles son ejemplos. No representan el stock real de VELIREA.</p>
    </div>
+   <nav class="catalog-filters" aria-label="Filtrar prendas por categoría" data-catalog-filters></nav>
+   <p class="catalog-status" role="status" data-catalog-status>Cargando las prendas…</p>
+   <button class="btn btn--secondary" type="button" data-catalog-retry hidden>Volver a intentar</button>
+   <div class="catalog-results" role="region" aria-labelledby="catalog-category-heading" aria-describedby="catalog-demo-notice">
+    <div class="catalog-results__head"><h3 id="catalog-category-heading" tabindex="-1">Pantalones</h3><p data-catalog-count></p></div>
+    <div class="catalog-grid" data-catalog-grid hidden></div>
+    <div class="catalog-empty" data-catalog-empty hidden><p class="catalog-empty__title" data-catalog-empty-title></p><p>Elegí otra categoría para seguir viendo el catálogo.</p><a class="link" href="#coleccion">Ver las prendas</a></div>
+   </div>
+   <p class="catalog-announcement" role="status" aria-live="polite" data-catalog-announcement></p>
+   <noscript><p>Activá JavaScript para elegir una categoría y ver las prendas de demostración.</p></noscript>
   </div>
  </section>
  <section class="section ground-brand" id="estilo" style="--h:1" aria-labelledby="style-h">
@@ -81,5 +96,6 @@
 </footer>
 <nav class="actionbar" aria-label="Contacto rápido"><a class="btn btn--primary" href="#consultas">Contactar a VELIREA</a></nav>
 <script type="module" src="assets/system.js"></script><script type="module" src="assets/layout/layout.js"></script><script type="module" src="assets/motion/motion.js"></script>
+<script type="module" src="catalog/catalog.js"></script>
 </body>
 </html>

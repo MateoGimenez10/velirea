@@ -1,0 +1,74 @@
+/* Catalog only. The homepage hero, global palette and existing sections keep their styles. */
+#coleccion.catalog-section { height: auto; min-height: 100svh; display: block; }
+#coleccion.catalog-section > .wrap { height: auto; }
+.catalog-menu { width: 100%; }
+.catalog-menu > summary { cursor: pointer; list-style: none; user-select: none; touch-action: manipulation; }
+.catalog-menu > summary::-webkit-details-marker { display: none; }
+.nav--split .catalog-menu > summary { padding-left: 0; transition: none; }
+.catalog-menu > summary::before { left: 0; }
+.catalog-menu > summary:focus-visible::before { transition: none; }
+.catalog-menu > summary .chev { margin-left: var(--s-2); transition: none; }
+.catalog-menu[open] > summary .chev { transform: rotate(180deg); }
+.catalog-menu__panel { position: fixed; top: var(--nav); left: 0; right: 0; padding: var(--s-6) 0; background: var(--bg); border-block: 1px solid var(--line); }
+.catalog-menu__links { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-2) var(--s-5); }
+.catalog-menu .catalog-category { justify-content: flex-start; }
+.catalog-heading { display: flex; align-items: end; justify-content: space-between; gap: var(--s-6); margin-bottom: var(--s-6); }
+.catalog-heading h2 { margin: 0; }
+.catalog-heading .t-lead { margin-top: var(--s-4); }
+.catalog-notice { max-width: 34ch; margin: 0; font-size: var(--t-small); line-height: 1.6; color: var(--ink); }
+.catalog-notice strong { display: block; font-weight: 500; }
+.catalog-filters { display: flex; flex-wrap: wrap; gap: var(--s-2); padding-block: var(--s-2); }
+.catalog-category { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: var(--s-2) var(--s-4); border: 1px solid var(--line); border-radius: 0; color: var(--ink); font: 500 var(--t-body)/1.5 var(--font-text); text-decoration: none; touch-action: manipulation; user-select: none; }
+.catalog-category[aria-current] { background: var(--action); color: var(--action-ink); border-color: var(--action); }
+.catalog-category:focus-visible, .catalog-menu > summary:focus-visible { outline: 2px solid var(--action); outline-offset: 3px; }
+.catalog-category:active { background: var(--surface); color: var(--ink); }
+.catalog-results__head { display: flex; align-items: baseline; gap: var(--s-4); margin: var(--s-6) 0 var(--s-5); }
+.catalog-results__head h3 { margin: 0; }
+.catalog-results__head h3:focus { outline: 2px solid var(--action); outline-offset: 6px; }
+.catalog-results__head p { margin: 0; color: var(--muted); font-size: var(--t-small); }
+.catalog-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-5); align-items: stretch; }
+.catalog-grid:has(> :nth-child(2):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.catalog-card { min-width: 0; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--bg); }
+.catalog-card__photo { aspect-ratio: 4 / 5; overflow: hidden; background: var(--surface); }
+.catalog-card__photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.catalog-card__image-error { display: grid; place-items: center; height: 100%; padding: var(--s-5); margin: 0; text-align: center; color: var(--ink); }
+.catalog-card__content { padding: var(--s-5); display: flex; flex-direction: column; flex: 1; gap: var(--s-2); }
+.catalog-card__content p { margin: 0; }
+.catalog-card__state { font-size: var(--t-small); line-height: 1.5; font-weight: 500; color: var(--ink); }
+.catalog-card__state[data-status="sold_out"] { color: var(--muted); }
+.catalog-card__name { font: 500 var(--t-lead)/1.4 var(--font-text); margin: 0; overflow-wrap: anywhere; }
+.catalog-card__price { font-size: var(--t-lead); font-weight: 500; color: var(--ink); }
+.catalog-card__sizes { font-size: var(--t-body); line-height: 1.6; overflow-wrap: anywhere; }
+.catalog-card__demo { padding-top: var(--s-3); margin-top: auto !important; font-size: var(--t-small); color: var(--muted); }
+.catalog-empty { padding: var(--s-8) var(--s-5); margin-top: var(--s-5); border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); text-align: center; }
+.catalog-empty p { margin: var(--s-3) 0 0; }
+.catalog-empty__title { font: 500 var(--t-lead)/1.5 var(--font-text); }
+.catalog-empty a { margin-top: var(--s-5); }
+.catalog-status { margin-top: var(--s-5); }
+.catalog-announcement { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.catalog-section [hidden] { display: none !important; }
+@media (hover: hover) and (pointer: fine) {
+  .catalog-category:not(:focus-visible) { transition: background-color var(--m-in) var(--m-ease), color var(--m-in) var(--m-ease), border-color var(--m-in) var(--m-ease), transform var(--m-in) var(--m-ease); }
+  .catalog-category:hover { border-color: var(--action); }
+  .catalog-category:active:not(:focus-visible) { transform: scale(.985); }
+}
+@media (max-width: 1023px) {
+  .catalog-menu__panel { position: static; border: 0; padding: 0 0 var(--s-4); }
+  .catalog-menu__links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nav.is-open .catalog-menu { grid-column: 1 / -1; }
+  .nav.is-open .catalog-menu > summary { width: 100%; }
+  .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 639px) {
+  .catalog-heading { align-items: flex-start; flex-direction: column; gap: var(--s-5); }
+  .catalog-notice { max-width: none; }
+  .catalog-menu__links, .catalog-grid, .catalog-grid:has(> :nth-child(2):last-child) { grid-template-columns: minmax(0, 1fr); }
+  .catalog-filters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .catalog-category { padding-inline: var(--s-3); }
+  .catalog-grid { gap: var(--s-6); }
+  .catalog-empty { text-align: left; padding: var(--s-6) var(--s-5); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalog-category { transition: none !important; }
+  .catalog-category:active { transform: none !important; }
+}
