@@ -14,13 +14,17 @@
 #coleccion.catalog-section > .wrap { height: auto; }
 .catalog-heading h2, .collection-title h1 { font: 400 clamp(2.15rem,4.5vw,4.6rem)/1.05 Georgia,serif; color: var(--p-ink); letter-spacing: -.035em; margin: 0; overflow-wrap: anywhere; }
 .catalog-heading { margin-bottom: clamp(18px,2.5vw,32px); }
+.all-products { display:inline-flex; align-items:center; gap:.45em; min-height:44px; margin-top:4px; color:var(--p-ink); text-decoration:underline; text-underline-offset:.22em; }
+.all-products:focus-visible { outline:2px solid var(--action); outline-offset:3px; }
 .collection-tiles { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:clamp(12px,2vw,28px); }
 .collection-tile { display:block; min-width:0; touch-action:manipulation; text-decoration:none; color:var(--p-ink); }
-.tile-frame { position:relative; display:grid; place-items:center; overflow:hidden; aspect-ratio: 5/4; background-color:#cdb494; background-image:repeating-linear-gradient(12deg, transparent 0 3px, rgb(81 53 32 / .07) 3px 4px),repeating-linear-gradient(102deg, transparent 0 3px, rgb(255 249 236 / .16) 3px 4px); border-radius:var(--r-sm); }
+.tile-frame { position:relative; display:grid; place-items:center; overflow:hidden; aspect-ratio: 4/5; background-color:#cdb494; background-image:repeating-linear-gradient(12deg, transparent 0 3px, rgb(81 53 32 / .07) 3px 4px),repeating-linear-gradient(102deg, transparent 0 3px, rgb(255 249 236 / .16) 3px 4px); border-radius:var(--r-sm); }
 .collection-tile:nth-child(3n) .tile-frame { background-color:#b39a85; }
 .collection-tile:nth-child(4n) .tile-frame { background-color:#dfcbb3; }
-.tile-letter { display:grid; place-items:center; width:48%; height:46%; color:#684730; background:#efdfc5; outline:1px dashed #9f8264; outline-offset:-5px; font:italic 400 clamp(2rem,5vw,4.7rem)/1 Georgia,serif; transform:rotate(-4deg); }
+.tile-letter { display:grid; place-items:center; width:48%; height:46%; color:var(--p-ink); background:#efdfc5; outline:1px dashed rgb(104 71 48 / .45); outline-offset:-5px; font:italic 400 clamp(2rem,5vw,4.7rem)/1 Georgia,serif; transform:rotate(-4deg); }
 .tile-frame img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.tile-frame img:is([data-editorial="pantalones"], [data-editorial="shorts"]) { object-position:center bottom; }
+.tile-frame img:is([data-editorial="remeras"], [data-editorial="blusas"]) { object-position:center 35%; }
 .tile-label { display:flex; align-items:center; justify-content:space-between; gap:5px; min-height:48px; padding:7px 1px; border-bottom:1px solid var(--line-strong); font:400 clamp(1.08rem,1.7vw,1.65rem)/1.12 Georgia,serif; overflow-wrap:anywhere; }
 .tile-arrow { flex:none; font:400 18px/1 var(--font-text); color:var(--p-accent); }
 .catalog-category, .collection-back { display:inline-flex; align-items:center; min-height:44px; color:var(--p-ink); text-decoration:none; touch-action:manipulation; }
@@ -71,7 +75,6 @@ footer#consultas .close__media { height:clamp(180px,27vw,420px); }
 }
 @media (max-width:700px) {
   .collection-tiles { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .tile-frame { aspect-ratio: 5/4; }
   .collection-view .catalog-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
   .catalog-card__content { padding:12px; }
   .catalog-card__sizes { font-size:.9rem; }
@@ -81,11 +84,16 @@ footer#consultas .close__media { height:clamp(180px,27vw,420px); }
 }
 @keyframes collection-arrive { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
 .collection-tile:active { color:var(--p-accent); }
+@media (hover:hover) and (pointer:fine) {
+  .collection-tile:hover .tile-arrow { color:var(--p-ink); }
+}
 @media (prefers-reduced-motion:no-preference) {
   .collection-tile .tile-frame, .collection-detail.is-ready .collection-title, .catalog-card { animation:collection-arrive var(--m-panel) var(--m-ease-enter) both; }
   .collection-tile { transition:transform var(--m-in) var(--m-ease); }
   .collection-tile:active { transform:scale(.98); }
   @media (hover:hover) and (pointer:fine) {
-    .collection-tile:hover:not(:active) { transform:translateY(-2px); }
+    .tile-frame img, .tile-arrow { transition:transform 200ms var(--m-ease-enter); }
+    .collection-tile:hover .tile-frame img { transform:scale(1.03); }
+    .collection-tile:hover .tile-arrow { transform:translate(2px,-2px); }
   }
 }

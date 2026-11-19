@@ -7,6 +7,7 @@ const sessionAge = 8 * 60 * 60;
 const catalogKey = 'catalog';
 const photoPrefix = '/api/shop/photo/';
 const initialNames = ['Pantalones','Remeras','Shorts','Polleras','Vestidos','Blusas','Accesorios'];
+const pausedCategoryIds = new Set(['cat-polleras','cat-vestidos','cat-accesorios']);
 const initial = {
   schemaVersion: 1, products: [], categories: initialNames.map((name, sortOrder) => ({
     id: 'cat-' + name.toLowerCase(), slug: name.toLowerCase(), name, sortOrder, isVisible: true
@@ -32,7 +33,12 @@ async function readJSON(request) {
 }
 async function readCatalog(store) {
   const saved = await store.getWithMetadata(catalogKey, {type:'json'});
-  return {catalog: saved?.data ?? initial, revision: saved?.etag ?? null};
+  const {categoryVisibilityVersion, ...catalog} = saved?.data ?? initial;
+  // Apply the pause to older catalogs until the owner's next save records their choices.
+  if (!categoryVisibilityVersion) {
+    catalog.categories = catalog.categories.map(c => pausedCategoryIds.has(c.id) ? {...c,isVisible:false} : c);
+  }
+  return {catalog, revision: saved?.etag ?? null};
 }
 function publicCatalog(catalog) {
   const categories = visibleCategories(catalog);
@@ -89,7 +95,7 @@ async function persistCatalog(request, store) {
     }
   }
   catalog.isDemo = false;
-  const result = await store.setJSON(catalogKey,catalog,current.revision ? {onlyIfMatch:current.revision} : {onlyIfNew:true});
+  const result = await store.setJSON(catalogKey,{...catalog,categoryVisibilityVersion:1},current.revision ? {onlyIfMatch:current.revision} : {onlyIfNew:true});
   requireThat(result.modified,409,'Otra sesión guardó cambios. Recargá el panel.');
   return json({catalog, revision:result.etag});
 }

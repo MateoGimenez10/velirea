@@ -60,7 +60,7 @@ function row(label, ...buttons) {
 function draw() {
   const {categories,products} = state.catalog;
   const selected = field('category').value;
-  field('category').replaceChildren(...categories.map(c => new Option(c.name,c.id)));
+  field('category').replaceChildren(...categories.map(c => new Option(c.name + (c.isVisible ? '' : ' · Oculta'),c.id)));
   if (categories.some(c => c.id === selected)) field('category').value = selected;
   $('products').replaceChildren(...products.map(p => row(
     p.name + ' · ' + formatPrice(p.priceCents) + ' · ' + (p.status === 'sold_out' ? 'Agotado' : 'Disponible') + (p.isVisible ? '' : ' · Oculta'),
@@ -76,8 +76,9 @@ function draw() {
   $('categories').replaceChildren(...categories.map((c,i) => {
     const up = button('Subir',() => move(i,-1)), down = button('Bajar',() => move(i,1));
     up.disabled = i === 0; down.disabled = i === categories.length - 1;
-    return row(c.name,button('Editar',() => {
+    return row(c.name + (c.isVisible ? '' : ' · Oculta'),button('Editar',() => {
       categoryId = c.id; $('category-label').textContent = 'Editar categoría';
+      $('category-visible').checked = c.isVisible;
       $('category-name').value = c.name; $('cancel-category').hidden = false; $('category-name').focus();
     }),up,down);
   }));
@@ -98,12 +99,13 @@ categoryForm.onsubmit = event => {
     const draft = structuredClone(state.catalog);
     const name = $('category-name').value.trim();
     if (!name || draft.categories.some(c => c.id !== categoryId && c.name.toLocaleLowerCase('es') === name.toLocaleLowerCase('es'))) throw Error('Ingresá un nombre de categoría único.');
-    if (categoryId) draft.categories.find(c => c.id === categoryId).name = name;
+    const isVisible = $('category-visible').checked;
+    if (categoryId) Object.assign(draft.categories.find(c => c.id === categoryId),{name,isVisible});
     else {
       const id = crypto.randomUUID();
       const base = name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'categoria';
       const slug = draft.categories.some(c => c.slug === base) ? base + '-' + id.slice(0,8) : base;
-      draft.categories.push({id,name,slug,isVisible:true,sortOrder:draft.categories.length});
+      draft.categories.push({id,name,slug,isVisible,sortOrder:draft.categories.length});
     }
     await save(draft,'Categoría guardada.'); clearCategory();
   });

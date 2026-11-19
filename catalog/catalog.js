@@ -35,13 +35,13 @@ function categoryTile(category, products) {
   frame.setAttribute('aria-hidden','true');
   const monogram = document.createElement('span');
   monogram.className = 'tile-letter';
-  monogram.textContent = category?.name.trim().charAt(0).toLocaleUpperCase('es') || 'V';
+  monogram.textContent = category.name.trim().charAt(0).toLocaleUpperCase('es');
   frame.append(monogram);
-  const src = category
-    ? products[0]?.images[0]?.src ?? editorial.get(category.slug)
-    : '/assets/img/editorial-small.jpg';
+  const productPhoto = products.find(product => product.images.length)?.images[0]?.src;
+  const src = productPhoto ?? editorial.get(category.slug);
   if (src) {
     const img = new Image();
+    if (!productPhoto) img.dataset.editorial = category.slug;
     img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
     img.addEventListener('error', () => img.remove(), {once:true});
     img.src = src;
@@ -51,10 +51,9 @@ function categoryTile(category, products) {
   link.replaceChildren(frame,label);
   return link;
 }
-function showDirectory(categories, byCategory, products) {
-  const entries = [null, ...categories];
-  tiles.replaceChildren(...entries.map(c => categoryTile(c, c ? byCategory.get(c.id) : products)));
-  document.querySelector('[data-catalog-menu]').replaceChildren(...entries.map(c => {
+function showDirectory(categories, byCategory) {
+  tiles.replaceChildren(...categories.map(c => categoryTile(c, byCategory.get(c.id))));
+  document.querySelector('[data-catalog-menu]').replaceChildren(...[null,...categories].map(c => {
     const link = linkTo(c);
     link.className = 'catalog-category';
     return link;
@@ -91,7 +90,7 @@ async function refresh() {
     const categories = visibleCategories(catalog);
     const byCategory = new Map(categories.map(c => [c.id,productsForCategory(catalog,c.id)]));
     const products = [...byCategory.values()].flat();
-    if (tiles) showDirectory(categories,byCategory,products);
+    if (tiles) showDirectory(categories,byCategory);
     else showCategory(categories,byCategory,products);
     status.hidden = true;
   } catch {

@@ -42,7 +42,8 @@ test('owner lifecycle and persistence with the Netlify Blobs development server'
     return handleShop(new Request(origin+'/api/shop/'+route,{method,headers,body}),{store,password,ip:'localhost'});
   }
   const guest = await (await call('catalog')).json();
-  assert.equal(guest.categories.length,7); assert.deepEqual(guest.products,[]);
+  assert.deepEqual(guest.categories.map(c => c.name),['Pantalones','Remeras','Shorts','Blusas']);
+  assert.deepEqual(guest.products,[]);
   for (const [path,method] of [['admin','GET'],['admin','PUT'],['photo','POST']]) {
     assert.equal((await call(path,method)).status,401);
   }
@@ -51,12 +52,20 @@ test('owner lifecycle and persistence with the Netlify Blobs development server'
   const cookie = login.headers.get('set-cookie').split(';')[0];
   assert.match(login.headers.get('set-cookie'),/HttpOnly; Secure; SameSite=Strict/);
   let state = await (await call('admin','GET',undefined,cookie)).json();
+  const legacy = structuredClone(state.catalog);
+  legacy.categories.forEach(c => { c.isVisible = true; });
+  await store.setJSON('catalog',legacy);
+  state = await (await call('admin','GET',undefined,cookie)).json();
+  assert.deepEqual(state.catalog.categories.filter(c => !c.isVisible).map(c => c.name),['Polleras','Vestidos','Accesorios']);
   async function save() {
     const response = await call('admin','PUT',state,cookie);
     assert.equal(response.status,200,await response.clone().text());
     state = await response.json();
   }
   const bytes = await readFile(new URL('../assets/img/catalog/jean-recto.jpg',import.meta.url));
+  state.catalog.categories.find(c => c.name === 'Vestidos').isVisible = true;
+  await save();
+  assert.ok((await (await call('catalog')).json()).categories.some(c => c.name === 'Vestidos'));
   const photos = [];
   for (let i=0;i<2;i++) {
     const upload = await call('photo','POST',bytes,cookie); assert.equal(upload.status,201,await upload.clone().text());
