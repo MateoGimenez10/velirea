@@ -14,6 +14,41 @@
   --display-stretch: 96%;
 }
 .nav__logo, .footer__mark { letter-spacing: .12em; }
+.brand-intro { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .brand-intro[data-variant] {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    pointer-events: none;
+    background: var(--p-bg);
+    color: var(--p-accent);
+    animation: velirea-reveal var(--m-image) var(--m-ease-io)
+      calc(var(--m-image) + var(--m-slide)) both;
+  }
+  .brand-intro span {
+    font: 400 clamp(2.5rem, 15vw, 10rem)/1 Georgia, serif;
+    letter-spacing: .055em;
+    animation: velirea-name var(--m-image) var(--m-ease-enter) both;
+  }
+  .brand-intro[data-variant="foto"] {
+    place-items: end start;
+    padding: max(8svh, 2rem) var(--gut);
+    color: var(--p-action-ink);
+    background: linear-gradient(0deg, rgb(40 26 16 / .8), transparent 85%),
+      var(--intro-photo, url("assets/img/editorial.jpg")) var(--intro-position, center 25%) / cover var(--p-accent);
+  }
+  .brand-intro[data-variant="foto"] span { animation-name: velirea-photo-name; }
+}
+@media (max-width: 639px) {
+  .brand-intro { --intro-photo: url("assets/img/editorial-small.jpg"); --intro-position: 90% center; }
+}
+@keyframes velirea-name { from { opacity: 0; transform: translateY(.12em); } to { opacity: 1; transform: none; } }
+@keyframes velirea-photo-name { from { opacity: 0; } to { opacity: 1; } }
+@keyframes velirea-reveal { from { opacity: 1; } to { opacity: 0; } }
 @media (max-width: 1023px) {
   html .nav.is-open :is(.nav__links, .nav__actions) {
     transition: opacity var(--m-panel) var(--m-ease), transform var(--m-panel) var(--m-ease);
