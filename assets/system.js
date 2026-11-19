@@ -75,12 +75,30 @@ function nav() {
   const toggle = nav.querySelector('.nav__toggle');
   const bars = '<svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
   const cross = '<svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
-  const setOpen = open => {
-    nav.classList.toggle('is-open', open);
+  const panels = [...nav.querySelectorAll('.nav__links, .nav__actions')];
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let revision = 0;
+  const setOpen = (open, animate = false) => {
+    const current = ++revision;
+    const closing = !open && animate && !reducedMotion.matches && nav.classList.contains('is-open');
+    nav.toggleAttribute('data-instant', !animate || reducedMotion.matches);
+    nav.classList.toggle('is-open', open || closing);
+    nav.classList.toggle('is-closing', closing);
+    for (const panel of panels) panel.inert = closing;
     document.body.classList.toggle('nav-locked', open);
-    if (toggle) { toggle.setAttribute('aria-expanded', String(open)); toggle.innerHTML = open ? cross : bars; }
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+      toggle.innerHTML = open ? cross : bars;
+    }
+    if (closing) {
+      const transitions = panels.flatMap(panel => panel.getAnimations());
+      Promise.allSettled(transitions.map(animation => animation.finished)).then(() => {
+        if (revision === current) setOpen(false);
+      });
+    }
   };
-  toggle?.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
+  toggle?.addEventListener('click', event => setOpen(toggle.getAttribute('aria-expanded') !== 'true', event.detail > 0));
   nav.querySelectorAll('.nav__item').forEach(item => {
     if (!item.querySelector('.nav__menu')) return;
     let btn = item.querySelector('.nav__expand');
@@ -108,7 +126,7 @@ function nav() {
   // a tap on any link in the open sheet closes it (a top-level word, a menu link, an action, an
   // in-page #anchor alike), so the page it leads to is never left under the sheet
   nav.addEventListener('click', e => {
-    if (nav.classList.contains('is-open') && e.target.closest?.('a[href]')) setOpen(false);
+    if (nav.classList.contains('is-open') && e.target.closest?.('a[href]')) setOpen(false, e.detail > 0);
   });
   window.matchMedia('(min-width: 1024px)').addEventListener('change', e => { if (e.matches) setOpen(false); });
 }
