@@ -53,10 +53,15 @@ test('owner lifecycle and persistence with the Netlify Blobs development server'
   }),{store,password:'',ip:'localhost'});
   assert.equal(unconfigured.status,503);
   const tooShort = await handleShop(new Request(origin+'/api/shop/login',{
-    method:'POST',headers:{origin},body:JSON.stringify({password:''})
+    method:'POST',headers:{origin},body:JSON.stringify({password})
   }),{store,password:randomBytes(8).toString('hex'),ip:'localhost'});
   assert.equal(tooShort.status,503);
-  assert.match((await tooShort.json()).error,/20 caracteres/);
+  assert.match((await tooShort.json()).error,/Netlify.*20 caracteres/);
+  const minimum = randomBytes(10).toString('hex');
+  const atMinimum = await handleShop(new Request(origin+'/api/shop/login',{
+    method:'POST',headers:{origin},body:JSON.stringify({password:minimum})
+  }),{store,password:minimum,ip:'localhost'});
+  assert.equal(atMinimum.status,200);
   const login = await call('login','POST',{password}); assert.equal(login.status,200);
   const cookie = login.headers.get('set-cookie').split(';')[0];
   assert.match(login.headers.get('set-cookie'),/HttpOnly; Secure; SameSite=Strict/);

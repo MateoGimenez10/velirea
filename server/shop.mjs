@@ -47,7 +47,7 @@ function publicCatalog(catalog) {
 }
 async function login(request, store, password, ip) {
   requireThat(password?.trim(), 503, 'La función no recibió la contraseña de Production. Revisá el alcance Functions en Netlify y volvé a desplegar.');
-  requireThat(password.length >= 20, 503, 'La contraseña configurada no cumple el mínimo de 20 caracteres. Actualizala en Netlify y volvé a desplegar.');
+  requireThat(password.length >= 20, 503, 'El ingreso está pausado por la configuración de Netlify. Esta versión del sitio recibió una contraseña de menos de 20 caracteres. Revisá VELIREA_OWNER_PASSWORD en Production y publicá un nuevo despliegue.');
   const input = await readJSON(request);
   const key = 'attempt/' + digest(ip || 'unknown').toString('hex');
   const attempt = await store.getWithMetadata(key, {type:'json'});
