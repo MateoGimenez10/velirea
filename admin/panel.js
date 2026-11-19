@@ -15,7 +15,9 @@ async function api(route, method = 'GET', value) {
   const result = await response.json();
   if (!response.ok) {
     if (response.status === 401) showLogin();
-    throw Error(result.error || 'Volvé a intentar.');
+    const error = new Error(result.error || 'Volvé a intentar.');
+    error.status = response.status;
+    throw error;
   }
   return result;
 }
@@ -33,6 +35,10 @@ async function run(action) {
 }
 function showLogin() {
   $('workspace').hidden = $('logout').hidden = true;
+  editor.hidden = true;
+  state = null;
+  clearPhotos();
+  clearCategory();
   login.hidden = false;
 }
 function enter(result) {
@@ -188,6 +194,12 @@ login.onsubmit = event => {
   });
 };
 $('logout').onclick = () => run(async () => {
-  await api('logout','POST'); clearPhotos(); state = null; editor.hidden = true; clearCategory(); showLogin(); say('Sesión cerrada.');
+  await api('logout','POST'); showLogin(); say('Sesión cerrada.');
 });
-run(async () => {enter(await api('admin')); say('');});
+run(async () => {
+  try { enter(await api('admin')); say(''); }
+  catch (error) {
+    showLogin();
+    say(error.status === 401 ? '' : 'No se pudo consultar la sesión. Volvé a intentar el ingreso.');
+  }
+});
