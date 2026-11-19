@@ -17,7 +17,7 @@
 <link rel="preload" href="fonts/figtree-400.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="stylesheet" href="assets/system.css"><link rel="stylesheet" href="assets/ui/cards.css">
 <link rel="stylesheet" href="assets/motion/motion.css"><link rel="stylesheet" href="assets/layout/layout.css">
-<link rel="stylesheet" href="page.css">
+<link rel="stylesheet" href="page.css?v=entrada-2">
 <link rel="stylesheet" href="catalog/catalog.css">
 <script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
@@ -30,6 +30,19 @@
   const layer = document.querySelector('.brand-intro');
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const requested = new URLSearchParams(location.search).get('entrada');
+  const preferenceKey = 'velirea:animar-entrada';
+  let playIntro = requested === 'animada';
+  try {
+    if (requested === 'animada') localStorage.setItem(preferenceKey, 'sí');
+    else if (requested === 'sistema') localStorage.removeItem(preferenceKey);
+    playIntro = localStorage.getItem(preferenceKey) === 'sí';
+  } catch {}
+  document.documentElement.toggleAttribute('data-play-intro', playIntro);
+  if (requested === 'animada' || requested === 'sistema') {
+    const url = new URL(location.href);
+    url.searchParams.delete('entrada');
+    history.replaceState(history.state, '', url);
+  }
   const preview = requested === 'beige' || requested === 'foto';
   const returning = performance.getEntriesByType('navigation')[0]?.type === 'back_forward';
   if ((location.hash && location.hash !== '#top') || returning) {
@@ -43,7 +56,7 @@
   const start = () => {
     if (document.hidden || layer.dataset.variant) return;
     layer.dataset.variant = preview ? requested : 'beige';
-    if (motion.matches) timer = setTimeout(finish, 1000);
+    if (motion.matches && !playIntro) timer = setTimeout(finish, 1000);
   };
   layer.addEventListener('animationend', event => {
     if (event.target === layer) finish();
@@ -122,6 +135,7 @@
   <div class="closing__links">
    <div class="footer-directory"><a class="footer__mark" href="#top"><span class="mark mark--initial" aria-hidden="true">V</span>VELIREA</a><p>Ropa femenina.</p><nav aria-label="Navegación del pie"><a href="#coleccion">Colección</a><a href="#estilo">Estilo</a></nav></div>
    <div class="footer__legal"><span>© 2026 VELIREA</span><a href="credits.html">Fotografías de referencia vía Pexels</a></div>
+   <div class="intro-preference"><a href="?entrada=animada">Activar animación de entrada</a><a href="?entrada=sistema">Usar movimiento del sistema</a></div>
   </div>
  </div>
 </footer>

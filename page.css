@@ -41,8 +41,19 @@
     var(--intro-photo, url("assets/img/editorial.jpg")) var(--intro-position, center 25%) / cover var(--p-accent);
 }
 .brand-intro[data-variant="foto"] span { transform-origin: left bottom; }
+.intro-preference { display: none; }
 @media (prefers-reduced-motion: reduce) {
-  .brand-intro[data-variant], .brand-intro[data-variant] span { animation: none; }
+  html:not([data-play-intro]) .brand-intro[data-variant],
+  html:not([data-play-intro]) .brand-intro[data-variant] span { animation: none; }
+  /* Only the explicitly enabled intro overrides the site's reduced-motion duration. */
+  html[data-play-intro] .brand-intro[data-variant] { animation-duration: var(--m-image) !important; }
+  html[data-play-intro] .brand-intro[data-variant] span {
+    animation-duration: calc(var(--m-image) * 2 + var(--m-slide)) !important;
+  }
+  .intro-preference { display: block; font-size: var(--t-small); }
+  .intro-preference a { display: inline-flex; align-items: center; min-height: 44px; }
+  html[data-play-intro] .intro-preference a:first-child,
+  html:not([data-play-intro]) .intro-preference a:last-child { display: none; }
 }
 @media (max-width: 639px) {
   .brand-intro { --intro-photo: url("assets/img/editorial-small.jpg"); --intro-position: 90% center; }
