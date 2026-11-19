@@ -31,19 +31,20 @@
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const requested = new URLSearchParams(location.search).get('entrada');
   const preview = requested === 'beige' || requested === 'foto';
-  let seen = false;
-  try { seen = sessionStorage.getItem('velirea-intro') === '1'; } catch {}
-  if (motion.matches || location.hash || (!preview && seen)) {
+  const returning = performance.getEntriesByType('navigation')[0]?.type === 'back_forward';
+  if ((location.hash && location.hash !== '#top') || returning) {
     layer.remove();
     return;
   }
-  layer.dataset.variant = preview ? requested : 'beige';
-  if (!preview) {
-    try { sessionStorage.setItem('velirea-intro', '1'); } catch {}
-  }
   const events = new AbortController();
   const options = {signal: events.signal, passive: true};
-  const finish = () => { layer.remove(); events.abort(); };
+  let timer;
+  const finish = () => { clearTimeout(timer); layer.remove(); events.abort(); };
+  const start = () => {
+    if (document.hidden || layer.dataset.variant) return;
+    layer.dataset.variant = preview ? requested : 'beige';
+    if (motion.matches) timer = setTimeout(finish, 1000);
+  };
   layer.addEventListener('animationend', event => {
     if (event.target === layer) finish();
   }, options);
@@ -51,6 +52,8 @@
     window.addEventListener(type, finish, options);
   }
   motion.addEventListener('change', finish, options);
+  document.addEventListener('visibilitychange', start, options);
+  start();
 })();
 </script>
 <!-- product; client palette cream, beige and cacao from the supplied VELIREA reference; Bricolage/Figtree; film still; nav-split; footer-dark; close-photo; brand-band; block; initial V; picture-develops in estilo; no scenes or effects. -->
