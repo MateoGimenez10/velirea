@@ -25,6 +25,11 @@ export function normalizeCatalog(input) {
     required(product.currency === 'ARS' && Number.isSafeInteger(product.priceCents) && product.priceCents >= 0, 'El precio debe expresarse en centavos de pesos argentinos.');
     required(Object.values(PRODUCT_STATUS).includes(product.status), 'Estado de prenda inválido.');
     required(Array.isArray(product.sizes) && product.sizes.length > 0 && product.sizes.every(text), 'La prenda necesita talles.');
+    const sizes = [...new Set(product.sizes.map(size => size.trim()))];
+    const colors = product.colors ?? [];
+    const soldOutSizes = product.soldOutSizes ?? [];
+    required(Array.isArray(colors) && colors.every(text), 'Revisá los colores de la prenda.');
+    required(Array.isArray(soldOutSizes) && soldOutSizes.every(size => sizes.includes(size)), 'Revisá los talles agotados.');
     required(Array.isArray(product.images) && product.images.length > 0, 'La prenda necesita una foto.');
     const images = product.images.map((image) => {
       required(text(image.src), 'La foto necesita una dirección.');
@@ -34,7 +39,7 @@ export function normalizeCatalog(input) {
       return { ...image, alt: text(image.alt) ? image.alt.trim() : product.name.trim() };
     });
     productIds.add(product.id);
-    return { ...product, name: product.name.trim(), sizes: product.sizes.map((size) => size.trim()), images, isVisible: product.isVisible !== false, isDemo: product.isDemo ?? Boolean(input.isDemo), sortOrder: Number.isFinite(product.sortOrder) ? product.sortOrder : 0 };
+    return { ...product, name: product.name.trim(), sizes, colors: [...new Set(colors.map(color => color.trim()))], soldOutSizes: [...new Set(soldOutSizes)], images, isVisible: product.isVisible !== false, isDemo: product.isDemo ?? Boolean(input.isDemo), sortOrder: Number.isFinite(product.sortOrder) ? product.sortOrder : 0 };
   });
   return { schemaVersion: CATALOG_SCHEMA_VERSION, isDemo: Boolean(input.isDemo), categories, products };
 }
@@ -48,6 +53,8 @@ export function productsForCategory(catalog, categoryId) {
 const pesos = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0, maximumFractionDigits: 2 });
 export const formatPrice = (priceCents) => `${pesos.format(priceCents / 100)} ARS`;
 export const categoryHref = (category) => category ? '/coleccion/?categoria=' + encodeURIComponent(category.slug) : '/coleccion/';
+export const productHref = product => '/prenda/?id=' + encodeURIComponent(product.id);
+export const isSoldOut = product => product.status === PRODUCT_STATUS.SOLD_OUT || product.sizes.every(size => product.soldOutSizes?.includes(size));
 export function slugFromHash(hash) {
   if (hash === '#coleccion' || !hash.startsWith('#coleccion/')) return null;
   try { return decodeURIComponent(hash.slice('#coleccion/'.length)); } catch { return ''; }

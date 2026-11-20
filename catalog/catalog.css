@@ -51,7 +51,9 @@ main.collection-detail { padding-block:clamp(18px,3vw,40px) 48px; }
 .catalog-card__content { padding: var(--s-4); display: flex; flex-direction: column; flex: 1; gap: var(--s-2); }
 .catalog-card__content p { margin: 0; }
 .catalog-description { white-space: pre-line; overflow-wrap: anywhere; }
-.catalog-next { align-self: start; min-height: 44px; color: var(--action); background: transparent; border: 0; text-decoration: underline; cursor: pointer; }
+a.catalog-card { color:inherit; text-decoration:none; }
+a.catalog-card:focus-visible { outline:2px solid var(--p-ink); outline-offset:3px; }
+@media (hover:hover) { a.catalog-card:hover .catalog-card__name { text-decoration:underline; text-underline-offset:.15em; } }
 .catalog-card__state { font-size: var(--t-small); line-height: 1.5; font-weight: 500; color: var(--ink); }
 .catalog-card__state[data-status="sold_out"] { color: var(--muted); }
 .catalog-card__name { font: 500 var(--t-body)/1.5 var(--font-text); margin: 0; overflow-wrap: anywhere; }

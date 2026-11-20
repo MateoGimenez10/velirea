@@ -1,4 +1,4 @@
-import { formatPrice, PRODUCT_STATUS } from '../model.js';
+import { formatPrice, isSoldOut, productHref } from '../model.js';
 
 const element = (tag, className, content) => {
   const node = document.createElement(tag);
@@ -8,7 +8,8 @@ const element = (tag, className, content) => {
 };
 
 export function productCard(product) {
-  const card = element('article', 'catalog-card');
+  const card = element('a', 'catalog-card');
+  card.href = productHref(product);
   card.dataset.productId = product.id;
   card.setAttribute('aria-labelledby', `product-${product.id}`);
   const media = element('div', 'catalog-card__photo');
@@ -29,28 +30,16 @@ export function productCard(product) {
   media.append(image);
 
   const content = element('div', 'catalog-card__content');
-  const state = element('p', 'catalog-card__state', product.status === PRODUCT_STATUS.AVAILABLE ? 'Disponible' : 'Agotado');
-  state.dataset.status = product.status;
+  const soldOut = isSoldOut(product);
+  const state = element('p', 'catalog-card__state', soldOut ? 'Agotado' : 'Disponible');
+  state.dataset.status = soldOut ? 'sold_out' : 'available';
   const title = element('h2', 'catalog-card__name', product.name);
   title.id = `product-${product.id}`;
   const price = element('p', 'catalog-card__price', formatPrice(product.priceCents));
-  const sizes = element('p', 'catalog-card__sizes', `Talles: ${product.sizes.join(' · ')}`);
+  const sizes = element('p', 'catalog-card__sizes', 'Talles: ' + product.sizes.map(size =>
+    !soldOut && product.soldOutSizes.includes(size) ? size + ' (agotado)' : size
+  ).join(' · '));
   content.append(state, title, price, sizes);
-  if (product.description) content.append(element('p', 'catalog-description', product.description));
-  if (product.images.length > 1) {
-    const next = element('button', 'catalog-next', 'Ver foto 2 de ' + product.images.length);
-    let current = 0;
-    next.type = 'button';
-    next.addEventListener('click', () => {
-      current = (current + 1) % product.images.length;
-      const photo = product.images[current];
-      image.src = photo.src;
-      image.alt = photo.alt;
-      media.replaceChildren(image);
-      next.textContent = 'Ver foto ' + ((current + 1) % product.images.length + 1) + ' de ' + product.images.length;
-    });
-    content.append(next);
-  }
   card.append(media, content);
   return card;
 }

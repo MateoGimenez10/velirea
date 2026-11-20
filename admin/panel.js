@@ -1,4 +1,4 @@
-import { formatPrice } from '/catalog/model.js';
+import { formatPrice, isSoldOut } from '/catalog/model.js';
 
 const $ = id => document.getElementById(id);
 const login = $('login'), editor = $('editor'), categoryForm = $('category');
@@ -69,7 +69,7 @@ function draw() {
   field('category').replaceChildren(...categories.map(c => new Option(c.name + (c.isVisible ? '' : ' · Oculta'),c.id)));
   if (categories.some(c => c.id === selected)) field('category').value = selected;
   $('products').replaceChildren(...products.map(p => row(
-    p.name + ' · ' + formatPrice(p.priceCents) + ' · ' + (p.status === 'sold_out' ? 'Agotado' : 'Disponible') + (p.isVisible ? '' : ' · Oculta'),
+    p.name + ' · ' + formatPrice(p.priceCents) + ' · ' + (isSoldOut(p) ? 'Agotado' : 'Disponible') + (p.isVisible ? '' : ' · Oculta'),
     button('Editar',() => edit(p)), button('Eliminar',() => run(async () => {
       if (!confirm('¿Eliminar «' + p.name + '» del catálogo?')) return;
       const draft = structuredClone(state.catalog);
@@ -137,6 +137,8 @@ function edit(p) {
     field('name').value = p.name; field('description').value = p.description;
     field('price').value = (p.priceCents/100).toFixed(2).replace('.',',');
     field('sizes').value = p.sizes.join(', '); field('status').value = p.status;
+    field('soldOutSizes').value = (p.soldOutSizes ?? []).join(', ');
+    field('colors').value = (p.colors ?? []).join(', ');
     field('category').value = p.categoryId; field('visible').checked = p.isVisible;
     photos = structuredClone(p.images);
   }
@@ -170,7 +172,9 @@ editor.onsubmit = event => {
   event.preventDefault(); run(async () => {
     const price = field('price').value.trim();
     if (!/^\d+(?:[.,]\d{1,2})?$/.test(price)) throw Error('Ingresá el precio sin puntos de miles, por ejemplo 24500,50.');
-    const sizes = field('sizes').value.split(',').map(s=>s.trim()).filter(Boolean);
+    const list = name => field(name).value.split(',').map(s=>s.trim()).filter(Boolean);
+    const sizes = list('sizes'), soldOutSizes = list('soldOutSizes'), colors = list('colors');
+    if (soldOutSizes.some(size => !sizes.includes(size))) throw Error('Incluí cada talle agotado también en la lista de talles.');
     if (!photos.length || !sizes.length || !field('name').value.trim()) throw Error('Completá el nombre, los talles y al menos una foto.');
     say('Guardando prenda…');
     const images = [];
@@ -181,7 +185,7 @@ editor.onsubmit = event => {
     const draft = structuredClone(state.catalog);
     const index = draft.products.findIndex(p => p.id === editingId);
     const product = {id:editingId || crypto.randomUUID(), name:field('name').value.trim(), description:field('description').value.trim(),
-      priceCents:Math.round(Number(price.replace(',','.'))*100),currency:'ARS',sizes,categoryId:field('category').value,
+      priceCents:Math.round(Number(price.replace(',','.'))*100),currency:'ARS',sizes,soldOutSizes,colors,categoryId:field('category').value,
       status:field('status').value,isVisible:field('visible').checked,images,sortOrder:index < 0 ? Date.now() : draft.products[index].sortOrder};
     if (index < 0) draft.products.push(product); else draft.products[index] = product;
     await save(draft,'Prenda guardada.'); clearPhotos(); editor.hidden = true;

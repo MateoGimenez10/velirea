@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es-AR" data-type="product" data-radius="soft" data-buttons="block">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#efdfc5"><title>Prenda · VELIREA</title>
+<link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/assets/system.css">
+<link rel="stylesheet" href="/page.css"><link rel="stylesheet" href="/catalog/catalog.css">
+<link rel="stylesheet" href="/prenda/detail.css"><script type="module" src="/prenda/detail.js"></script>
+</head>
+<body class="collection-view">
+<header class="collection-mast"><div class="wrap">
+ <a class="nav__logo" href="/" aria-label="VELIREA, inicio"><span class="mark mark--initial" aria-hidden="true">V</span>VELIREA</a>
+ <a class="collection-back" href="/coleccion/">Todas las prendas</a>
+</div></header>
+<main class="wrap product-page">
+ <a class="collection-back" id="back" href="/#coleccion">← Volver a la colección</a>
+ <p role="status" id="notice">Cargando prenda…</p>
+ <button class="btn btn--secondary" id="retry" hidden>Volver a intentar</button>
+ <article id="product" hidden>
+  <div class="gallery" aria-label="Fotos de la prenda">
+   <div id="slides" class="slides"></div>
+   <div class="gallery-tools"><span id="position" aria-live="polite"></span><button type="button" id="expand">Ampliar foto</button></div>
+   <div class="thumbs" id="thumbs" role="group" aria-label="Seleccionar fotografía"></div>
+  </div>
+  <div class="product-info">
+   <p id="state" class="product-state"></p><h1 id="name"></h1><p id="price" class="product-price"></p>
+   <p id="description" class="description" hidden></p>
+   <p id="colors" hidden></p>
+   <fieldset class="sizes"><legend>Talles</legend><div id="sizes"></div></fieldset>
+   <a id="consult" class="btn btn--primary" target="_blank" rel="noopener">Consultar esta prenda por WhatsApp</a>
+  </div>
+ </article>
+ <noscript>Activá JavaScript para ver la ficha de esta prenda.</noscript>
+</main>
+<dialog id="viewer" aria-label="Foto ampliada">
+ <div class="viewer-tools"><button type="button" id="zoom" aria-pressed="false">Ver al 100 %</button><button type="button" id="close" autofocus>Cerrar</button></div>
+ <div class="viewer-photo"><img id="large" alt=""></div>
+</dialog>
+</body></html>

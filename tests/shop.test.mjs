@@ -95,6 +95,7 @@ test('owner lifecycle and persistence with the Netlify Blobs development server'
   assert.equal((await call('admin','PUT',state,cookie,'https://otra.test')).status,403);
   const product = state.catalog.products[0];
   product.priceCents = 2345678; product.sizes = ['S','L']; product.status = 'sold_out';
+  product.colors = ['Beige']; product.soldOutSizes = ['L'];
   state.catalog.categories[0].name = 'Sacos';
   await save();
   await server.stop(); await start();
@@ -102,6 +103,8 @@ test('owner lifecycle and persistence with the Netlify Blobs development server'
   assert.equal(publicData.categories[0].name,'Sacos');
   assert.equal(publicData.products[0].priceCents,2345678);
   assert.deepEqual(publicData.products[0].sizes,['S','L']);
+  assert.deepEqual(publicData.products[0].colors,['Beige']);
+  assert.deepEqual(publicData.products[0].soldOutSizes,['L']);
   assert.equal(publicData.products[0].status,'sold_out'); assert.equal(publicData.products[0].images.length,2);
   const photoRoute = photos[0].src.split('/api/shop/')[1];
   assert.deepEqual(Buffer.from(await (await call(photoRoute)).arrayBuffer()),bytes);
